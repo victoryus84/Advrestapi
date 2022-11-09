@@ -1,0 +1,16 @@
+pip:
+1. pip freeze > requirements.txt
+2. pip install -r requirements.txt
+
+nginx:
+1. sudo systemctl stop nginx
+2. sudo systemctl start nginx
+3. sudo systemctl restart nginx
+4. sudo systemctl reload nginx
+5. sudo systemctl disable nginx
+6. sudo systemctl enable nginx
+
+gunicorn:
+1. sudo systemctl start myproject
+2. sudo systemctl enable myproject
+3. sudo systemctl status myproject
