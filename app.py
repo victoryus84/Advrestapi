@@ -1,5 +1,5 @@
 from importlib import resources
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, Blueprint
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
@@ -7,36 +7,19 @@ from flask_sqlalchemy import SQLAlchemy
 from resources.user import ACCESS_EXPIRES, UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from datadb import db
+from datadb import conn
 from blacklist import BLACKLIST
 from datetime import datetime
 
-import os.path as os_path
-
-basedir = os_path.abspath(os_path.dirname(__file__))
-
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + \
-    os_path.join(basedir, 'app.sqlite')
-app.config["TESTING"] = True
-app.config["DEBUG"] = True
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config["JWT_BLACKLIST_ENABLED"] = True  # enable blacklist feature
-app.config["JWT_SECRET_KEY"] = "hooligan1984"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
-app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = [
-    "access",
-    "refresh",
-]  # allow blacklisting for access and refresh tokens
-
-db.init_app(app)
+app.config.from_pyfile('config.py', silent=True)
+conn.init_app(app)
 api = Api(app)
 
 
 @app.before_first_request
 def create_tables():
-    db.create_all()
+    conn.create_all()
 
 
 jwt = JWTManager(app)
@@ -58,6 +41,8 @@ api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(UserLogout, "/logout")
 
 # SITE
+main_bp = Blueprint('main_bp', __name__)
+app.register_blueprint(main_bp)
 @app.route("/")
 def home():
     param1 = "Victor"
@@ -65,5 +50,5 @@ def home():
     return render_template("home.html", param1=param1, param2=param2)
 
 if __name__ == "__main__":
-    db.init_app(app)
-    app.run(host='0.0.0.0' , port=5000)
+    conn.init_app(app)
+    app.run(debug=True, host='0.0.0.0')

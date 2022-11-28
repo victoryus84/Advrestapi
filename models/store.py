@@ -1,22 +1,22 @@
 from typing import Dict, List, Union
-from datadb import db
+from datadb import conn
 from models.item import ItemJSON
 
 StoreJSON = Dict[str, Union[int, str, List[ItemJSON]]]
 
 
-class StoreModel(db.Model):
+class StoreModel(conn.Model):
     __tablename__ = "stores"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True)
+    id = conn.Column(conn.Integer, primary_key=True)
+    name = conn.Column(conn.String(80), unique=True)
 
-    items = db.relationship("ItemModel", lazy="dynamic", overlaps="store")
+    items = conn.relationship("ItemModel", lazy="dynamic", overlaps="store")
 
     def __init__(self, name: str):
         self.name = name
 
-    
+
     def json(self) -> StoreJSON:
         return {
             "id": self.id,
@@ -32,12 +32,12 @@ class StoreModel(db.Model):
     def find_all(cls) -> List["StoreModel"]:
         return cls.query.all()
 
-    
-    def save_to_db(self) -> None:
-        db.session.add(self)
-        db.session.commit()
 
-    
+    def save_to_db(self) -> None:
+        conn.session.add(self)
+        conn.session.commit()
+
+
     def delete_from_db(self) -> None:
-        db.session.delete(self)
-        db.session.commit()
+        conn.session.delete(self)
+        conn.session.commit()

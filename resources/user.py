@@ -27,7 +27,7 @@ USER_NOT_FOUND = "User not found."
 USER_DELETED = "User deleted."
 USER_LOGGED_OUT = "User <id={user_id}> successfully logged out."
 INVALID_CREDENTIALS = "Invalid credentials!"
-ACCESS_EXPIRES = timedelta(hours=1) 
+ACCESS_EXPIRES = timedelta(hours=1)
 PARSER = reqparse.RequestParser()
 PARSER.add_argument(
     "username", type=str, required=True, help=BLANK_ERROR.format("username"), nullable=False

@@ -4,3 +4,4 @@
 *.pyo
 __pycache__/
 reminder.txt
+config.py

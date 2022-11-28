@@ -4,10 +4,42 @@ services:
   app:
     build: .
     container_name: advrestapi
-    command: gunicorn --bind 0.0.0.0:5000 app:app
+    command: gunicorn --bind 0.0.0.0:5000 --workers=4 app:app
+    # app:app
+    environment:
+      - DATABASE_URL=postgresql://cvictor:qwe123@db:5432/advrestapi
     volumes:
-      - ./services/web/:/usr/src/app/
+      - ./:/app
+    expose:
+      - 5000
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    container_name: postgresapp
+    volumes:
+      - ./pg_db:/var/lib/postgres/data/
+    environment:
+      - POSTGRES_USER=cvictor
+      - POSTGRES_PASSWORD=qwe123
+      - POSTGRES_DB=advrestapi
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadminapp
+    depends_on:
+      - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=victorcostiuc@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=qwe123 # если сменить здесь, то нужно удалить контентер
+      - PGADMIN_LISTEN_ADDRESS=0.0.0.0 # чтобы не было косяков с nginx лушче в одну сеть с app
+      - PGADMIN_LISTEN_PORT=5555
+  nginx:
+    build: ./nginx
+    container_name: nginxservak
     ports:
-      - 5000:5000
-    env_file:
-      - ./.env.dev
+      - 80:80
+    volumes:
+      - ./templates:/home/web/default/static
+    depends_on:
+      - app
+      - pgadmin
