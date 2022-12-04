@@ -45,7 +45,7 @@ main_bp = Blueprint('main_bp', __name__)
 app.register_blueprint(main_bp)
 @app.route("/")
 def home():
-    param1 = "Victor"
+    param1 = "World!"
     param2 = datetime.now()
     return render_template("home.html", param1=param1, param2=param2)
 

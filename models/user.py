@@ -1,3 +1,5 @@
+
+#siimplu comentariu
 from typing import Dict, Union
 from json import *
 from flask_sqlalchemy import SQLAlchemy
