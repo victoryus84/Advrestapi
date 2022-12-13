@@ -16,11 +16,9 @@ app.config.from_pyfile('config.py', silent=True)
 conn.init_app(app)
 api = Api(app)
 
-
 @app.before_first_request
 def create_tables():
     conn.create_all()
-
 
 jwt = JWTManager(app)
 
@@ -45,9 +43,10 @@ main_bp = Blueprint('main_bp', __name__)
 app.register_blueprint(main_bp)
 @app.route("/")
 def home():
-    param1 = "World!"
-    param2 = datetime.now()
-    return render_template("home.html", param1=param1, param2=param2)
+    # param1 = "World!"
+    # param2 = datetime.now()
+    # return render_template("home.html", param1=param1, param2=param2)
+    return {"time": datetime.now()}
 
 if __name__ == "__main__":
     conn.init_app(app)
